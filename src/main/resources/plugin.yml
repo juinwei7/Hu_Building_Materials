@@ -1,0 +1,8 @@
+name: Hu_Building_Materials
+version: '${project.version}'
+main: org.weiwei.hu_building_materials.Hu_Building_Materials
+api-version: 1.20
+commands:
+  build_shop:
+    aliases:
+      - build_shop
