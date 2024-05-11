@@ -17,6 +17,7 @@ import java.util.List;
 import static org.weiwei.hu_building_materials.MENU.Menu.creatinv;
 import static uilt.Config.TYPE_INT_getlist;
 import static uilt.Config.vip_discount;
+import static uilt.log.log;
 import static uilt.seed.color;
 import static uilt.seed.seed;
 import static uilt.uilt_all.*;
@@ -100,12 +101,13 @@ public class menu_Listener implements Listener {
                     double playerbalance = CoinsEngineAPI.getBalance(player, currency);
 
                     if (hasEmptySlots(player)) {
-                        if(matcoin<playerbalance) { //確認玩家的coin夠多
+                        if(matcoin<playerbalance) { //確認玩家的coin夠多  
                             CoinsEngineAPI.removeBalance(player, currency, matcoin);
                             ItemStack giveitem = new ItemStack(item.getType());
 
                             for (int i = 0;i<64;i++){player.getInventory().addItem(giveitem);} //給物品
 
+                            log(player.getName() + " 購買建材 " + giveitem.getType(),"log");
                             seed(player, Config.getConfig().getString(Config.MEG_YES_DOWN),matcoin);
 
                         }else {
