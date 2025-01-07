@@ -1,4 +1,4 @@
-package org.weiwei.hu_building_materials.MENU;
+package org.weiwei.hu_building_materials.menu;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -8,8 +8,8 @@ import static uilt.uilt_all.creatmatitem;
 
 public class Menu {
 
-    public static Inventory creatinv(String guiname){
-        Inventory inv = Bukkit.createInventory(null,54,guiname);
+    public static Inventory creatInv(String guiname){
+        Inventory inv = Bukkit.createInventory(null, 54, guiname);
         ItemStack BUILDING_item = creatmatitem(Material.ACACIA_LOG,"§f建材方塊","MAT_TYPE",1);
         ItemStack DYED_item = creatmatitem(Material.LIGHT_BLUE_WOOL,"§f染色方塊","MAT_TYPE",2);
         ItemStack OTH_item = creatmatitem(Material.OAK_SAPLING,"§f其他方塊","MAT_TYPE",3);

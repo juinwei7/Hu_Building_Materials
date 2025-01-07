@@ -1,4 +1,4 @@
-package org.weiwei.hu_building_materials.Listener;
+package org.weiwei.hu_building_materials.listener;
 
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.entity.Player;
@@ -8,13 +8,16 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.weiwei.hu_building_materials.Hu_Building_Materials;
+import su.nightexpress.coinsengine.CoinsEnginePlugin;
 import su.nightexpress.coinsengine.api.CoinsEngineAPI;
 import su.nightexpress.coinsengine.api.currency.Currency;
+import su.nightexpress.coinsengine.currency.CurrencyManager;
 import uilt.Config;
 
 import java.util.List;
 
-import static org.weiwei.hu_building_materials.MENU.Menu.creatinv;
+import static org.weiwei.hu_building_materials.menu.Menu.creatInv;
 import static uilt.Config.TYPE_INT_getlist;
 import static uilt.Config.vip_discount;
 import static uilt.log.log;
@@ -22,7 +25,7 @@ import static uilt.seed.color;
 import static uilt.seed.seed;
 import static uilt.uilt_all.*;
 
-public class menu_Listener implements Listener {
+public class MenuListener implements Listener {
     @EventHandler
     void OnOpen(InventoryOpenEvent event) {
         String BMB_GUINAME = color(Config.getConfig().getString(Config.BMB_GUINAME));
@@ -86,14 +89,14 @@ public class menu_Listener implements Listener {
                     setinv(TYPE_x,inv,"biold_money",true,vip_discount);
                 }
 
-                if (solt == 3){player.openInventory(creatinv(BMB_GUINAME));}
-                if (solt == 4){player.openInventory(creatinv(DB_GUINAME));}
-                if (solt == 5){player.openInventory(creatinv(OTH_GUINAME));}
+                if (solt == 3){player.openInventory(creatInv(BMB_GUINAME));}
+                if (solt == 4){player.openInventory(creatInv(DB_GUINAME));}
+                if (solt == 5){player.openInventory(creatInv(OTH_GUINAME));}
 
                 int matcoin = nbtItem.getInteger("biold_money");
 
                 if (nbtItem.hasTag("biold_money")) { //處理購買
-                    Currency currency = CoinsEngineAPI.getCurrency("BuildCoin"); // Get currency called 'coins'.
+                    Currency currency = CoinsEngineAPI.getCurrency("buildcoin");
                     if (currency == null) {
                         seed(player,Config.getConfig().getString(Config.MEG_COIN_ERROR));
                         return;
@@ -101,7 +104,7 @@ public class menu_Listener implements Listener {
                     double playerbalance = CoinsEngineAPI.getBalance(player, currency);
 
                     if (hasEmptySlots(player)) {
-                        if(matcoin<playerbalance) { //確認玩家的coin夠多  
+                        if(matcoin<playerbalance) { //確認玩家的coin夠多
                             CoinsEngineAPI.removeBalance(player, currency, matcoin);
                             ItemStack giveitem = new ItemStack(item.getType());
 

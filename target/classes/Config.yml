@@ -18,7 +18,7 @@ PERMISSIONS:
 
 
 BUILDING_MATERIAL_BLOCK:
-  GUINAME: '          &1&L建材方塊'
+  GUINAME: '              &1&L建材方塊'
   BLOCK:
     - 'OAK_LOG,木頭類,1'
     - 'OAK_LEAVES,葉子類,2'
@@ -203,7 +203,7 @@ BUILDING_MATERIAL_BLOCK:
 
 
 DYED_BLOCK:
-  GUINAME: '          &1&L染色方塊'
+  GUINAME: '              &1&L染色方塊'
   BLOCK:
     - 'WHITE_WOOL,羊毛類,1'
     - 'TERRACOTTA,陶土類,2'
@@ -324,7 +324,7 @@ DYED_BLOCK:
     - 'TINTED_GLASS,遮光玻璃,12'
 
 OTH_BLOCK:
-  GUINAME: '          &1&L其他方塊'
+  GUINAME: '              &1&L其他方塊'
   BLOCK:
     - 'REDSTONE_BLOCK,紅石類,1'
     - 'OAK_SAPLING,樹苗類 花草類,2'

@@ -2,11 +2,11 @@ package uilt;
 
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.weiwei.hu_building_materials.Hu_Building_Materials;
 
 import java.io.File;
 import java.util.List;
 
-import static org.weiwei.hu_building_materials.Hu_Building_Materials.instance;
 
 public class Config {
 
@@ -46,10 +46,10 @@ public class Config {
     private static List<String> OTH_BLOCK_List;
 
     public static void loadConfig() {
-        File file = new File(instance.getDataFolder(), "Config.yml");
+        File file = new File(Hu_Building_Materials.getInstance().getDataFolder(), "Config.yml");
         if (!file.exists()) {
-            instance.getLogger().info("Create Config.yml");
-            instance.saveResource("Config.yml", true);
+            Hu_Building_Materials.getInstance().getLogger().info("Create Config.yml");
+            Hu_Building_Materials.getInstance().saveResource("Config.yml", true);
         }
         config = YamlConfiguration.loadConfiguration(file);
 
