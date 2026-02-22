@@ -1,0 +1,13 @@
+# Maven 編譯產出
+/target/
+
+# IntelliJ IDEA
+/.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Log files
+*.log
+
