@@ -1,8 +1,9 @@
-org\weiwei\hu_building_materials\command\Command.class
-org\weiwei\hu_building_materials\menu\Menu.class
-org\weiwei\hu_building_materials\listener\MenuListener.class
-org\weiwei\hu_building_materials\Hu_Building_Materials.class
-uilt\Config.class
-uilt\seed.class
-uilt\log.class
-uilt\uilt_all.class
+org/weiwei/hu_building_materials/menu/Menu.class
+org/weiwei/hu_building_materials/Hu_Building_Materials.class
+org/weiwei/hu_building_materials/command/Command.class
+uilt/seed.class
+org/weiwei/hu_building_materials/listener/MenuListener.class
+org/weiwei/hu_building_materials/service/CoinService.class
+uilt/log.class
+uilt/uilt_all.class
+uilt/Config.class

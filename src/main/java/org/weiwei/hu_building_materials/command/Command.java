@@ -14,7 +14,7 @@ public class Command implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, org.bukkit.command.@NotNull Command command, @NotNull String label, String[] args) {
         if (sender instanceof Player player) {
-            if(!Hu_Building_Materials.isCoinsEngine()) {
+            if(!Hu_Building_Materials.isCoinsCore()) {
                 sender.sendMessage("§cCoinsEngine is not enabled!");
                 return false;
             }
