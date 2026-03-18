@@ -22,4 +22,10 @@ public class CoinService {
         return coinsApi.take(uuid, BigDecimal.valueOf(coin), "building-plugin", reason);
     }
 
+    public static double getCoin(UUID uuid){
+        CoinsApi coinsApi = CoinsApi.of("buildingCoin").orElse(null);
+        if (coinsApi == null) return 0;
+        return coinsApi.getBalance(uuid).doubleValue();
+    }
+
 }

@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.weiwei.hu_building_materials.menu.Menu;
 import org.weiwei.hu_building_materials.service.CoinService;
 import uilt.Config;
 
@@ -67,7 +68,7 @@ public class MenuListener implements Listener {
         String DB_GUINAME = color(Config.getConfig().getString(Config.DB_GUINAME));
         String OTH_GUINAME = color(Config.getConfig().getString(Config.OTH_GUINAME));
         if (event.getView().getTitle().equals(BMB_GUINAME) || event.getView().getTitle().equals(DB_GUINAME) || event.getView().getTitle().equals(OTH_GUINAME)) {
-            int solt = event.getRawSlot();
+            int slot = event.getRawSlot();
 
             event.setCancelled(true);
 
@@ -94,14 +95,17 @@ public class MenuListener implements Listener {
                     setinv(TYPE_x, inv, "biold_money", true, vip_discount);
                 }
 
-                if (solt == 3) {
-                    player.openInventory(creatInv(BMB_GUINAME));
+                // 建材方塊
+                if (slot == 3) {
+                    player.openInventory(creatInv(player, BMB_GUINAME));
                 }
-                if (solt == 4) {
-                    player.openInventory(creatInv(DB_GUINAME));
+                // 染色方塊
+                if (slot == 4) {
+                    player.openInventory(creatInv(player, DB_GUINAME));
                 }
-                if (solt == 5) {
-                    player.openInventory(creatInv(OTH_GUINAME));
+                // 其他
+                if (slot == 5) {
+                    player.openInventory(creatInv(player, OTH_GUINAME));
                 }
 
                 if (!nbtItem.hasTag("biold_money")) return;
@@ -133,6 +137,7 @@ public class MenuListener implements Listener {
                 log(player.getName() + " 購買建材 " + giveitem.getType(), "log");
                 seed(player, Config.getConfig().getString(Config.MEG_YES_DOWN), matcoin);
 
+                Menu.refreshInv(player, inv);
             }
         }
 
