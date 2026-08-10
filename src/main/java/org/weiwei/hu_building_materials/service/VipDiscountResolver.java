@@ -1,6 +1,7 @@
 package org.weiwei.hu_building_materials.service;
 
 import java.util.Map;
+import java.util.List;
 import java.util.function.Predicate;
 
 public final class VipDiscountResolver {
@@ -20,5 +21,24 @@ public final class VipDiscountResolver {
         }
 
         return bestDiscount;
+    }
+
+    public static Tier resolveTier(Tier defaultTier,
+                                   List<Tier> tiers,
+                                   Predicate<String> hasPermission) {
+        Tier bestTier = defaultTier;
+
+        for (Tier tier : tiers) {
+            if (tier.permission() != null
+                    && hasPermission.test(tier.permission())
+                    && tier.value() < bestTier.value()) {
+                bestTier = tier;
+            }
+        }
+
+        return bestTier;
+    }
+
+    public record Tier(String key, String permission, String name, double value) {
     }
 }

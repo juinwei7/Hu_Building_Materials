@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.weiwei.hu_building_materials.Hu_Building_Materials;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.ArrayList;
@@ -94,7 +95,8 @@ public class ItemTool {
     }
 
     public static Component legacyComponent(String text) {
-        return LEGACY_SERIALIZER.deserialize(text);
+        return LEGACY_SERIALIZER.deserialize(text)
+                .decoration(TextDecoration.ITALIC, false);
     }
 
     //設定GUI

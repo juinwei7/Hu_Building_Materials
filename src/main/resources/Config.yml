@@ -1,34 +1,75 @@
+# 幻嵐建材商店主設定檔
+# 重要：本插件沒有 reload 指令，修改後請完整重啟伺服器。
+# 顏色碼可使用 '&' 或 '§'；Material 請使用 Paper 1.21.8 的英文枚舉名稱。
+
+# 插件訊息前綴。
 PREFIX: '§f〔幻嵐助手〕§r'
 
+# 每個建材商品說明最後都會加上這些內容。
+# 每次購買固定獲得 64 個對應方塊。
 ITEM_LORE:
   - '&f購買前請確認購買物品是正確'
   - ''
   - '&c!注意 買錯無法退貨'
 
 PERMISSIONS:
+  # false：所有玩家都能打開商店。
+  # true：玩家必須擁有下方 USE 權限才能打開。
   REQUIRE_USE_PERMISSION: false
+  # 只有 REQUIRE_USE_PERMISSION 為 true 時才會檢查此權限。
   USE: "hu_building.shop"
-  # VIP 權限格式：hu_building.<下方鍵名>，同時擁有多種權限時取最低折扣倍率
-  VIP:
-    DEFAULT: 1
-    VIP1: 0.95
-    VIP2: 0.9
-    VIP3: 0.85
-    VIP4: 0.7
 
+  # VIP 權限格式：hu_building.<下方鍵名>，例如 hu_building.VIP1。
+  # DEFAULT 是沒有 VIP 權限時使用的預設階級，不需要授權。
+  # NAME 是選單中顯示的階級名稱。
+  # VALUE 是「實際售價倍率」：1 = 原價、0.95 = 付 95% (折價 5%)、0.7 = 付 70% (折價 30%)。
+  # 玩家同時擁有多種 VIP 權限時，會自動使用 VALUE 最小、折價最多的階級。
+  VIP:
+    DEFAULT:
+      NAME: '默認'
+      VALUE: 1
+    VIP1:
+      NAME: 'ᴘʀᴍ - 脈動共鳴 LV.1'
+      VALUE: 0.95
+    VIP2:
+      NAME: 'ᴘʀᴍ2 - 脈動支配 LV.2'
+      VALUE: 0.9
+    VIP3:
+      NAME: 'ᴘʀᴍ3 - 世界核心 LV.3'
+      VALUE: 0.85
+    VIP4:
+      NAME: 'ᴘʀᴍ4 - 創世脈守 LV.4'
+      VALUE: 0.7
+
+  # 商店上方的「階級折扣資訊」圖示。說明內容會根據上方 VIP 自動產生。
+  # SLOT 從 0 開始計算，只能使用 0~8；0、3、4、5 已被其他按鈕佔用。
+  VIP_DISPLAY:
+    SLOT: 1
+    MATERIAL: BOOK
+    DISPLAY_NAME: '&f⌜ &6階級折扣資訊 &f⌟'
+
+# 是否在商店內提供「遊戲幣購買建材點」。
+# 此功能需要 Vault，並需要一個 Vault 經濟插件（例如 CMI）。
+# 發放前會檢查 CoinsApi.getMaxValue()；發放失敗時會嘗試自動退回遊戲幣。
 BUILDING_COIN_PURCHASE:
+  # false 會完全關閉此購買按鈕。
   ENABLED: true
-  SLOT: 48
+  # GUI 格位從 0 開始計算；右上角是 8。請避開 0、1、3、4、5（其他功能按鈕）。
+  # 放在 9~53 時會佔用商品格，清單最多只能排 44 格；放在上排可排滿 45 格。
+  SLOT: 8
+  # 購買按鈕的 Minecraft Material。
   MATERIAL: PAPER
+  # AMOUNT：每次獲得的建材點；PRICE：每次扣除的遊戲幣。
   AMOUNT: 100
   PRICE: 1850
-  DISPLAY_NAME: '&f⌜ &6⎋建材點 x 100 &f⌟'
+  # DISPLAY_NAME、LORE 與 MESSAGE 可使用 %amount% 和 %price%，%price% 會自動加千分位。
+  DISPLAY_NAME: '&f⌜ &6⎋建材點 x %amount% &f⌟'
   LORE:
     - '&e • 點我進行購買 •'
     - ''
-    - '&7 + 購買後將會拿到 100 ⎋建材點'
+    - '&7 + 購買後將會拿到 %amount% ⎋建材點'
     - ''
-    - '&7售價 1,850 遊戲幣'
+    - '&7售價 %price% 遊戲幣'
   MESSAGE:
     SUCCESS: '&a購買成功，花費 $%price% 遊戲幣獲得 %amount% ⎋建材點'
     NO_MONEY: '&c遊戲幣不足，您需要 $%price%'
@@ -39,8 +80,13 @@ BUILDING_COIN_PURCHASE:
     REFUND_ERROR: '&c交易異常且自動退款失敗，請立即聯絡管理員'
 
 
-
+# 商品列表共通格式：
+# BLOCK：'MATERIAL,分類顯示名稱,TYPE_編號'。
+# TYPE_n：'MATERIAL,商品顯示名稱,建材點價格'，價格是購買 64 個的總價。
+# 'NULL' 會保留一格空位，可用來排版；購買按鈕放在商品區時每個清單最多 44 格，放在上排時為 45 格。
+# Material 寫錯、格式不完整、分類編號找不到 TYPE_n 時，插件會在啟動時停用並將原因寫入 console。
 BUILDING_MATERIAL_BLOCK:
+  # 建材方塊分頁的 GUI 標題。
   GUINAME: '              &1&L建材方塊'
   BLOCK:
     - 'OAK_LOG,木頭類,1'
@@ -236,6 +282,7 @@ BUILDING_MATERIAL_BLOCK:
     - 'AMETHYST_BLOCK,紫水晶方塊,32'
 
 
+# 染色方塊分頁；GUINAME、BLOCK、TYPE_n 格式與上方相同。
 DYED_BLOCK:
   GUINAME: '              &1&L染色方塊'
   BLOCK:
@@ -375,6 +422,7 @@ DYED_BLOCK:
     - 'RED_DYE,紅色染料,24'
     - 'BLACK_DYE,黑色染料,24'
 
+# 其他方塊分頁；GUINAME、BLOCK、TYPE_n 格式與上方相同。
 OTH_BLOCK:
   GUINAME: '              &1&L其他方塊'
   BLOCK:
@@ -427,6 +475,8 @@ OTH_BLOCK:
 
 
 
+# 玩家收到的交易與錯誤訊息。
+# YES_DOWN、NO_DOWN 可使用 %matcoin% 顯示這次購買需要的建材點。
 MESSAGE:
   YES_DOWN: '&a購買成功，花費 ⎋%matcoin% 建材點'
   NO_DOWN: '&c購買失敗，您需要 ⎋%matcoin% 建材點'
