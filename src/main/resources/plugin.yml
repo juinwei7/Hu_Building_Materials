@@ -4,6 +4,9 @@ main: org.weiwei.hu_building_materials.Hu_Building_Materials
 api-version: '1.21'
 depend:
   - CoinsCore
+  - Vault
+softdepend:
+  - CMI
 commands:
   build_shop:
     aliases:

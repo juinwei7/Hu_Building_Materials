@@ -75,6 +75,17 @@ public class ItemTool {
         return meta.getPersistentDataContainer().get(dataKey(key), PersistentDataType.INTEGER);
     }
 
+    public static ItemStack setIntData(ItemStack item, String key, int value) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
+            return item;
+        }
+
+        meta.getPersistentDataContainer().set(dataKey(key), PersistentDataType.INTEGER, value);
+        item.setItemMeta(meta);
+        return item;
+    }
+
     private static NamespacedKey dataKey(String key) {
         return new NamespacedKey(
                 Hu_Building_Materials.getInstance(),
@@ -89,8 +100,13 @@ public class ItemTool {
     //設定GUI
     public static void setinv(List<String> BLOCK_list, Inventory inventory,String nbt,boolean haslore,double vip_discount){
         int i = 9;
+        int reservedSlot = Config.isCoinPurchaseEnabled() ? Config.getCoinPurchaseSlot() : -1;
 
         for (String itemline : BLOCK_list) {
+
+            if (i == reservedSlot) {
+                i++;
+            }
 
             if (!itemline.equalsIgnoreCase("NULL")) { //如果物品為null，跳過那一格
                 String[] parts = itemline.split(",", -1);

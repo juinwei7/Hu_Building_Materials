@@ -11,9 +11,11 @@ import uilt.ItemTool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static uilt.ItemTool.creatmatitem;
 import static uilt.ItemTool.legacyComponent;
+import static uilt.ItemTool.setIntData;
 import static uilt.seed.color;
 
 public class Menu {
@@ -36,11 +38,40 @@ public class Menu {
         inv.setItem(4, DYED_item);
         inv.setItem(5, OTH_item);
         inv.setItem(0, getPlayerCoinInfoItem(player));
+        setCoinPurchaseItem(inv);
         return inv;
     }
 
     public static void refreshInv(Player player, Inventory inv){
         inv.setItem(0, getPlayerCoinInfoItem(player));
+    }
+
+    public static void setCoinPurchaseItem(Inventory inventory) {
+        if (!Config.isCoinPurchaseEnabled()) {
+            return;
+        }
+
+        String displayName = formatCoinPurchaseText(Config.getCoinPurchaseDisplayName());
+        List<String> lore = Config.getCoinPurchaseLore().stream()
+                .map(Menu::formatCoinPurchaseText)
+                .map(text -> color(text))
+                .toList();
+        ItemStack button = creatmatitem(
+                Config.getCoinPurchaseMaterial(),
+                color(displayName),
+                lore
+        );
+        inventory.setItem(
+                Config.getCoinPurchaseSlot(),
+                setIntData(button, "coin_purchase", 1)
+        );
+    }
+
+    public static String formatCoinPurchaseText(String text) {
+        String price = String.format(Locale.US, "%,d", Config.getCoinPurchasePrice());
+        return text
+                .replace("%amount%", String.valueOf(Config.getCoinPurchaseAmount()))
+                .replace("%price%", price);
     }
 
     private static ItemStack getPlayerCoinInfoItem(Player player) {
@@ -53,8 +84,8 @@ public class Menu {
         lore.add(" ");
         lore.add("§7當前建材點: " + coin);
         lore.add(" ");
-        lore.add("§e(購買建材點數請到選單商城)");
-        lore.add("§e(第一排第四個 -> 商城系統)");
+        lore.add("§e(可點選本商店最下排第四個)");
+        lore.add("§e(使用遊戲幣購買建材點)");
 
         ItemMeta im = item.getItemMeta();
         if (im != null) {

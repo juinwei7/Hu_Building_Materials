@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.weiwei.hu_building_materials.menu.Menu;
 import org.weiwei.hu_building_materials.menu.ShopInventoryHolder;
+import org.weiwei.hu_building_materials.service.BuildingCoinPurchaseService;
 import org.weiwei.hu_building_materials.service.CoinService;
 import uilt.Config;
 
@@ -35,6 +36,7 @@ public class MenuListener implements Listener {
             case OTHER -> Config.getOTH_BLOCK_List();
         };
         setinv(categories, event.getInventory(), "type_int", false, 0);
+        Menu.setCoinPurchaseItem(event.getInventory());
     }
 
     @EventHandler
@@ -57,6 +59,11 @@ public class MenuListener implements Listener {
 
         ItemStack item = event.getCurrentItem();
         if (item == null) {
+            return;
+        }
+
+        if (getIntData(item, "coin_purchase") != null) {
+            handleCoinPurchase(player, inv);
             return;
         }
 
@@ -84,6 +91,7 @@ public class MenuListener implements Listener {
             var products = TYPE_INT_getlist(configSection, "TYPE_" + typeInt);
             clearinv(inv);
             setinv(products, inv, "build_money", true, vipDiscount);
+            Menu.setCoinPurchaseItem(inv);
             return;
         }
 
@@ -119,5 +127,30 @@ public class MenuListener implements Listener {
         log(player.getName() + " 購買建材 " + giveitem.getType(), "log");
         seed(player, Config.getConfig().getString(Config.MEG_YES_DOWN), matcoin);
         Menu.refreshInv(player, inv);
+    }
+
+    private void handleCoinPurchase(Player player, Inventory inventory) {
+        int price = Config.getCoinPurchasePrice();
+        int amount = Config.getCoinPurchaseAmount();
+        BuildingCoinPurchaseService.PurchaseResult result =
+                BuildingCoinPurchaseService.purchase(player, price, amount);
+
+        String messageKey = switch (result) {
+            case SUCCESS -> "SUCCESS";
+            case NOT_ENOUGH_MONEY -> "NO_MONEY";
+            case ECONOMY_UNAVAILABLE -> "ECONOMY_UNAVAILABLE";
+            case COIN_UNAVAILABLE -> "COIN_UNAVAILABLE";
+            case COIN_LIMIT_EXCEEDED -> "COIN_LIMIT";
+            case COIN_ERROR -> "COIN_ERROR";
+            case REFUND_ERROR -> "REFUND_ERROR";
+        };
+        seed(player, Menu.formatCoinPurchaseText(Config.getCoinPurchaseMessage(messageKey)));
+
+        if (result == BuildingCoinPurchaseService.PurchaseResult.SUCCESS) {
+            log(player.getName() + " 購買 " + amount + " 建材點，花費 " + price + " 遊戲幣", "log");
+            Menu.refreshInv(player, inventory);
+        } else if (result == BuildingCoinPurchaseService.PurchaseResult.REFUND_ERROR) {
+            log(player.getName() + " 購買建材點失敗，且遊戲幣自動退款失敗", "error");
+        }
     }
 }

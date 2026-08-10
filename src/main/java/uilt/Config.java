@@ -9,6 +9,9 @@ import org.weiwei.hu_building_materials.Hu_Building_Materials;
 import org.weiwei.hu_building_materials.service.VipDiscountResolver;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +27,8 @@ public class Config {
     public static final String PERMISSIONS_REQUIRE_USE = "PERMISSIONS.REQUIRE_USE_PERMISSION";
 
     public static final String ITEM_LORE = "ITEM_LORE";
+
+    public static final String COIN_PURCHASE = "BUILDING_COIN_PURCHASE";
 
     public static final String BMB_GUINAME = "BUILDING_MATERIAL_BLOCK.GUINAME";
     public static final String BMB_BLOCK = "BUILDING_MATERIAL_BLOCK.BLOCK";
@@ -62,6 +67,7 @@ public class Config {
             Hu_Building_Materials.getInstance().saveResource("Config.yml", true);
         }
         config = YamlConfiguration.loadConfiguration(file);
+        applyMissingDefaults();
 
         BMB_BLOCK_List = config.getStringList(BMB_BLOCK);
         DB_BLOCK_List = config.getStringList(DB_BLOCK);
@@ -104,6 +110,39 @@ public class Config {
         return config.getString(PERMISSIONS_USE, "hu_building.shop");
     }
 
+    public static boolean isCoinPurchaseEnabled() {
+        return config.getBoolean(COIN_PURCHASE + ".ENABLED", false);
+    }
+
+    public static int getCoinPurchaseSlot() {
+        return config.getInt(COIN_PURCHASE + ".SLOT", 48);
+    }
+
+    public static Material getCoinPurchaseMaterial() {
+        String material = config.getString(COIN_PURCHASE + ".MATERIAL", "PAPER");
+        return Material.valueOf(material.trim().toUpperCase(Locale.ROOT));
+    }
+
+    public static int getCoinPurchaseAmount() {
+        return config.getInt(COIN_PURCHASE + ".AMOUNT", 100);
+    }
+
+    public static int getCoinPurchasePrice() {
+        return config.getInt(COIN_PURCHASE + ".PRICE", 1850);
+    }
+
+    public static String getCoinPurchaseDisplayName() {
+        return config.getString(COIN_PURCHASE + ".DISPLAY_NAME", "&6⎋建材點 x 100");
+    }
+
+    public static List<String> getCoinPurchaseLore() {
+        return config.getStringList(COIN_PURCHASE + ".LORE");
+    }
+
+    public static String getCoinPurchaseMessage(String key) {
+        return config.getString(COIN_PURCHASE + ".MESSAGE." + key, "&c建材點交易失敗");
+    }
+
     private static boolean validateConfig() {
         List<String> errors = new ArrayList<>();
 
@@ -122,6 +161,7 @@ public class Config {
         }
 
         validateVipDiscounts(errors);
+        validateCoinPurchase(errors);
         validateShopSection("BUILDING_MATERIAL_BLOCK", errors);
         validateShopSection("DYED_BLOCK", errors);
         validateShopSection("OTH_BLOCK", errors);
@@ -164,6 +204,40 @@ public class Config {
         }
     }
 
+    private static void validateCoinPurchase(List<String> errors) {
+        if (!isCoinPurchaseEnabled()) {
+            return;
+        }
+
+        int slot = getCoinPurchaseSlot();
+        if (slot < 9 || slot > 53) {
+            errors.add(COIN_PURCHASE + ".SLOT 必須介於 9 到 53");
+        }
+
+        String materialName = config.getString(COIN_PURCHASE + ".MATERIAL");
+        if (materialName == null || Material.getMaterial(materialName.trim().toUpperCase(Locale.ROOT)) == null) {
+            errors.add(COIN_PURCHASE + ".MATERIAL 無效：" + materialName);
+        }
+
+        validatePositiveInteger(COIN_PURCHASE + ".AMOUNT", errors);
+        validatePositiveInteger(COIN_PURCHASE + ".PRICE", errors);
+        validateRequiredString(COIN_PURCHASE + ".DISPLAY_NAME", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.SUCCESS", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.NO_MONEY", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.ECONOMY_UNAVAILABLE", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.COIN_UNAVAILABLE", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.COIN_LIMIT", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.COIN_ERROR", errors);
+        validateRequiredString(COIN_PURCHASE + ".MESSAGE.REFUND_ERROR", errors);
+    }
+
+    private static void validatePositiveInteger(String path, List<String> errors) {
+        Object rawValue = config.get(path);
+        if (!(rawValue instanceof Number number) || number.intValue() <= 0) {
+            errors.add(path + " 必須是大於 0 的整數");
+        }
+    }
+
     private static void validateShopSection(String sectionPath, List<String> errors) {
         ConfigurationSection section = config.getConfigurationSection(sectionPath);
         if (section == null) {
@@ -186,8 +260,9 @@ public class Config {
             return;
         }
 
-        if (items.size() > 45) {
-            errors.add(path + " 共 " + items.size() + " 格，超過 GUI 上限 45 格");
+        int maxItems = isCoinPurchaseEnabled() ? 44 : 45;
+        if (items.size() > maxItems) {
+            errors.add(path + " 共 " + items.size() + " 格，超過 GUI 上限 " + maxItems + " 格");
         }
 
         for (int index = 0; index < items.size(); index++) {
@@ -230,5 +305,22 @@ public class Config {
     private static boolean sectionTypeExists(String blockPath, int type) {
         String sectionPath = blockPath.substring(0, blockPath.length() - ".BLOCK".length());
         return config.isList(sectionPath + ".TYPE_" + type);
+    }
+
+    private static void applyMissingDefaults() {
+        Hu_Building_Materials plugin = Hu_Building_Materials.getInstance();
+        try (InputStream input = plugin.getResource("Config.yml")) {
+            if (input == null) {
+                return;
+            }
+
+            YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(input, StandardCharsets.UTF_8)
+            );
+            config.setDefaults(defaults);
+            config.options().copyDefaults(true);
+        } catch (Exception exception) {
+            plugin.getLogger().warning("無法讀取 Config.yml 預設值：" + exception.getMessage());
+        }
     }
 }

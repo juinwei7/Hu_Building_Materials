@@ -16,6 +16,28 @@ PERMISSIONS:
     VIP3: 0.85
     VIP4: 0.7
 
+BUILDING_COIN_PURCHASE:
+  ENABLED: true
+  SLOT: 48
+  MATERIAL: PAPER
+  AMOUNT: 100
+  PRICE: 1850
+  DISPLAY_NAME: '&f⌜ &6⎋建材點 x 100 &f⌟'
+  LORE:
+    - '&e • 點我進行購買 •'
+    - ''
+    - '&7 + 購買後將會拿到 100 ⎋建材點'
+    - ''
+    - '&7售價 1,850 遊戲幣'
+  MESSAGE:
+    SUCCESS: '&a購買成功，花費 $%price% 遊戲幣獲得 %amount% ⎋建材點'
+    NO_MONEY: '&c遊戲幣不足，您需要 $%price%'
+    ECONOMY_UNAVAILABLE: '&c遊戲幣系統目前無法使用，請聯絡管理員'
+    COIN_UNAVAILABLE: '&c建材點系統目前無法使用，請聯絡管理員'
+    COIN_LIMIT: '&c這次購買會超過建材點持有上限，無法購買'
+    COIN_ERROR: '&c建材點發放失敗，遊戲幣已退回'
+    REFUND_ERROR: '&c交易異常且自動退款失敗，請立即聯絡管理員'
+
 
 
 BUILDING_MATERIAL_BLOCK:
