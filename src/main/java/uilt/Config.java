@@ -1,11 +1,19 @@
 package uilt;
 
 import lombok.Getter;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.weiwei.hu_building_materials.Hu_Building_Materials;
+import org.weiwei.hu_building_materials.service.VipDiscountResolver;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 public class Config {
@@ -13,6 +21,7 @@ public class Config {
     public static final String PREFIX = "PREFIX";
 
     public static final String PERMISSIONS_USE = "PERMISSIONS.USE";
+    public static final String PERMISSIONS_REQUIRE_USE = "PERMISSIONS.REQUIRE_USE_PERMISSION";
 
     public static final String ITEM_LORE = "ITEM_LORE";
 
@@ -30,6 +39,7 @@ public class Config {
     public static final String MEG_NO_DOWN = "MESSAGE.NO_DOWN";
     public static final String MEG_INV_NOSLOT = "MESSAGE.INV_NOSLOT";
     public static final String MEG_COIN_ERROR = "MESSAGE.COIN_ERROR";
+    public static final String MEG_NO_PERMISSION = "MESSAGE.NO_PERMISSION";
 
 
     @Getter
@@ -45,7 +55,7 @@ public class Config {
     @Getter
     private static List<String> OTH_BLOCK_List;
 
-    public static void loadConfig() {
+    public static boolean loadConfig() {
         File file = new File(Hu_Building_Materials.getInstance().getDataFolder(), "Config.yml");
         if (!file.exists()) {
             Hu_Building_Materials.getInstance().getLogger().info("Create Config.yml");
@@ -57,6 +67,8 @@ public class Config {
         DB_BLOCK_List = config.getStringList(DB_BLOCK);
         OTH_BLOCK_List = config.getStringList(OTH_BLOCK);
         ITEM_LORE_List = config.getStringList(ITEM_LORE);
+
+        return validateConfig();
     }
 
     public static List<String> TYPE_INT_getlist(String MAT_TYPE,String TYPE_INT){
@@ -64,7 +76,159 @@ public class Config {
         newlist = config.getStringList(MAT_TYPE + "." + TYPE_INT);
         return newlist;
     }
-    public static double vip_discount(String VIP){
-        return config.getDouble("PERMISSIONS.VIP." + VIP);
+    public static double getVipDiscount(Player player) {
+        ConfigurationSection vipSection = config.getConfigurationSection("PERMISSIONS.VIP");
+        if (vipSection == null) {
+            return 1.0;
+        }
+
+        double defaultDiscount = vipSection.getDouble("DEFAULT", 1.0);
+        Map<String, Double> permissionDiscounts = new LinkedHashMap<>();
+
+        for (String vip : vipSection.getKeys(false)) {
+            if (vip.equalsIgnoreCase("DEFAULT")) {
+                continue;
+            }
+
+            permissionDiscounts.put("hu_building." + vip, vipSection.getDouble(vip, defaultDiscount));
+        }
+
+        return VipDiscountResolver.resolve(defaultDiscount, permissionDiscounts, player::hasPermission);
+    }
+
+    public static boolean isUsePermissionRequired() {
+        return config.getBoolean(PERMISSIONS_REQUIRE_USE, false);
+    }
+
+    public static String getUsePermission() {
+        return config.getString(PERMISSIONS_USE, "hu_building.shop");
+    }
+
+    private static boolean validateConfig() {
+        List<String> errors = new ArrayList<>();
+
+        validateRequiredString(PREFIX, errors);
+        validateRequiredString(BMB_GUINAME, errors);
+        validateRequiredString(DB_GUINAME, errors);
+        validateRequiredString(OTH_GUINAME, errors);
+        validateRequiredString(MEG_YES_DOWN, errors);
+        validateRequiredString(MEG_NO_DOWN, errors);
+        validateRequiredString(MEG_INV_NOSLOT, errors);
+        validateRequiredString(MEG_COIN_ERROR, errors);
+
+        if (isUsePermissionRequired()) {
+            validateRequiredString(PERMISSIONS_USE, errors);
+            validateRequiredString(MEG_NO_PERMISSION, errors);
+        }
+
+        validateVipDiscounts(errors);
+        validateShopSection("BUILDING_MATERIAL_BLOCK", errors);
+        validateShopSection("DYED_BLOCK", errors);
+        validateShopSection("OTH_BLOCK", errors);
+
+        if (!errors.isEmpty()) {
+            Hu_Building_Materials plugin = Hu_Building_Materials.getInstance();
+            plugin.getLogger().severe("Config.yml 驗證失敗，插件將停用：");
+            errors.forEach(error -> plugin.getLogger().severe("- " + error));
+            return false;
+        }
+
+        return true;
+    }
+
+    private static void validateRequiredString(String path, List<String> errors) {
+        String value = config.getString(path);
+        if (value == null || value.isBlank()) {
+            errors.add(path + " 不可為空");
+        }
+    }
+
+    private static void validateVipDiscounts(List<String> errors) {
+        ConfigurationSection vipSection = config.getConfigurationSection("PERMISSIONS.VIP");
+        if (vipSection == null || !vipSection.contains("DEFAULT")) {
+            errors.add("PERMISSIONS.VIP.DEFAULT 未設定");
+            return;
+        }
+
+        for (String vip : vipSection.getKeys(false)) {
+            Object rawValue = vipSection.get(vip);
+            if (!(rawValue instanceof Number number)) {
+                errors.add("PERMISSIONS.VIP." + vip + " 必須是數字");
+                continue;
+            }
+
+            double discount = number.doubleValue();
+            if (discount <= 0.0 || discount > 1.0) {
+                errors.add("PERMISSIONS.VIP." + vip + " 必須大於 0 且小於或等於 1");
+            }
+        }
+    }
+
+    private static void validateShopSection(String sectionPath, List<String> errors) {
+        ConfigurationSection section = config.getConfigurationSection(sectionPath);
+        if (section == null) {
+            errors.add(sectionPath + " 區段不存在");
+            return;
+        }
+
+        validateItemList(sectionPath + ".BLOCK", section.getStringList("BLOCK"), false, errors);
+
+        for (String key : section.getKeys(false)) {
+            if (key.startsWith("TYPE_")) {
+                validateItemList(sectionPath + "." + key, section.getStringList(key), true, errors);
+            }
+        }
+    }
+
+    private static void validateItemList(String path, List<String> items, boolean isProductList, List<String> errors) {
+        if (items.isEmpty()) {
+            errors.add(path + " 沒有任何設定");
+            return;
+        }
+
+        if (items.size() > 45) {
+            errors.add(path + " 共 " + items.size() + " 格，超過 GUI 上限 45 格");
+        }
+
+        for (int index = 0; index < items.size(); index++) {
+            String itemLine = items.get(index);
+            if (itemLine.equalsIgnoreCase("NULL")) {
+                continue;
+            }
+
+            String location = path + "[" + index + "]";
+            String[] parts = itemLine.split(",", -1);
+            if (parts.length != 3) {
+                errors.add(location + " 必須是 MATERIAL,顯示名稱," + (isProductList ? "價格" : "分類編號"));
+                continue;
+            }
+
+            Material material = Material.getMaterial(parts[0].trim().toUpperCase(Locale.ROOT));
+            if (material == null) {
+                errors.add(location + " 的 Material 無效：" + parts[0]);
+            }
+
+            if (parts[1].isBlank()) {
+                errors.add(location + " 的顯示名稱不可為空");
+            }
+
+            try {
+                int value = Integer.parseInt(parts[2].trim());
+                if (isProductList && value < 0) {
+                    errors.add(location + " 的價格不可為負數");
+                } else if (!isProductList && value <= 0) {
+                    errors.add(location + " 的分類編號必須大於 0");
+                } else if (!isProductList && !sectionTypeExists(path, value)) {
+                    errors.add(location + " 指向不存在的 TYPE_" + value);
+                }
+            } catch (NumberFormatException exception) {
+                errors.add(location + " 的" + (isProductList ? "價格" : "分類編號") + "必須是整數");
+            }
+        }
+    }
+
+    private static boolean sectionTypeExists(String blockPath, int type) {
+        String sectionPath = blockPath.substring(0, blockPath.length() - ".BLOCK".length());
+        return config.isList(sectionPath + ".TYPE_" + type);
     }
 }

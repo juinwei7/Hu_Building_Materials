@@ -1,37 +1,40 @@
 package org.weiwei.hu_building_materials.menu;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.weiwei.hu_building_materials.service.CoinService;
-import uilt.uilt_all;
+import uilt.Config;
+import uilt.ItemTool;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static uilt.uilt_all.creatmatitem;
+import static uilt.ItemTool.creatmatitem;
+import static uilt.ItemTool.legacyComponent;
+import static uilt.seed.color;
 
 public class Menu {
 
-    public static Inventory creatInv(Player player, String guiname) {
-        Inventory inv = Bukkit.createInventory(null, 54, guiname);
-        ItemStack BUILDING_item = creatmatitem(Material.ACACIA_LOG, "§f建材方塊", "MAT_TYPE", 1);
-        ItemStack DYED_item = creatmatitem(Material.LIGHT_BLUE_WOOL, "§f染色方塊", "MAT_TYPE", 2);
-        ItemStack OTH_item = creatmatitem(Material.OAK_SAPLING, "§f其他方塊", "MAT_TYPE", 3);
+    public static Inventory creatInv(Player player, ShopInventoryHolder.ShopType shopType) {
+        String guiName = switch (shopType) {
+            case BUILDING -> Config.getConfig().getString(Config.BMB_GUINAME);
+            case DYED -> Config.getConfig().getString(Config.DB_GUINAME);
+            case OTHER -> Config.getConfig().getString(Config.OTH_GUINAME);
+        };
+        Inventory inv = new ShopInventoryHolder(shopType, legacyComponent(color(guiName))).getInventory();
+        ItemStack BUILDING_item = creatmatitem(Material.ACACIA_LOG, "§f建材方塊", "mat_type", 1);
+        ItemStack DYED_item = creatmatitem(Material.LIGHT_BLUE_WOOL, "§f染色方塊", "mat_type", 2);
+        ItemStack OTH_item = creatmatitem(Material.OAK_SAPLING, "§f其他方塊", "mat_type", 3);
         ItemStack item_null = creatmatitem(Material.GRAY_STAINED_GLASS_PANE, " ", null);
         for (int i = 0; i < 9; i++) {
-            if (i == 3 || i == 4 || i == 5) {
-                inv.setItem(3, BUILDING_item);
-                inv.setItem(4, DYED_item);
-                inv.setItem(5, OTH_item);
-
-            } else {
-                inv.setItem(i, item_null);
-            }
+            inv.setItem(i, item_null);
         }
+        inv.setItem(3, BUILDING_item);
+        inv.setItem(4, DYED_item);
+        inv.setItem(5, OTH_item);
         inv.setItem(0, getPlayerCoinInfoItem(player));
         return inv;
     }
@@ -42,7 +45,7 @@ public class Menu {
 
     private static ItemStack getPlayerCoinInfoItem(Player player) {
 
-        double coin = CoinService.getCoin(player.getUniqueId());
+        String coin = CoinService.getCoin(player.getUniqueId()).stripTrailingZeros().toPlainString();
         String name = "§7個人貨幣";
 
         ItemStack item = new ItemStack(Material.PAPER);
@@ -54,9 +57,9 @@ public class Menu {
         lore.add("§e(第一排第四個 -> 商城系統)");
 
         ItemMeta im = item.getItemMeta();
-        im.setDisplayName(name);
         if (im != null) {
-            im.setLore(lore);
+            im.displayName(legacyComponent(name));
+            im.lore(lore.stream().map(ItemTool::legacyComponent).toList());
             item.setItemMeta(im);
         }
         return item;

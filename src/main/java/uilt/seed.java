@@ -7,13 +7,11 @@ import java.util.List;
 public class seed {
 
     public static String color(String s){
-        String new_s = s.replaceAll("&","§");
-
-        return new_s;
+        return s.replace('&', '§');
     }
     public static List<String> color(List<String> line_list){
         for (int i = 0;i<line_list.size();i++){
-            String newline = line_list.get(i).replaceAll("&","§");
+            String newline = line_list.get(i).replace('&', '§');
             line_list.set(i,newline);
         }
 
@@ -26,7 +24,7 @@ public class seed {
     public static void seed(Player player,String s,int matcoin){
         String PREFIX = color(Config.getConfig().getString(Config.PREFIX));
         if (s.contains("%matcoin%")) {
-            s = s.replaceAll("%matcoin%", String.valueOf(matcoin));
+            s = s.replace("%matcoin%", String.valueOf(matcoin));
         }
         player.sendMessage(PREFIX + color(s));
     }

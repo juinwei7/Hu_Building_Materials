@@ -6,15 +6,15 @@ ITEM_LORE:
   - '&c!注意 買錯無法退貨'
 
 PERMISSIONS:
+  REQUIRE_USE_PERMISSION: false
   USE: "hu_building.shop"
-  # 設定 hu_building.VIP1
+  # VIP 權限格式：hu_building.<下方鍵名>，同時擁有多種權限時取最低折扣倍率
   VIP:
     DEFAULT: 1
-    VIP5: 0.95
-    VIP7: 0.9
-    VIP8: 0.85
-    VIP9: 0.7
-    VIP10: 0.6
+    VIP1: 0.95
+    VIP2: 0.9
+    VIP3: 0.85
+    VIP4: 0.7
 
 
 
@@ -38,6 +38,7 @@ BUILDING_MATERIAL_BLOCK:
     - 'DARK_OAK_LOG,黑橡木原木,24'
     - 'MANGROVE_LOG,紅樹林木原木,24'
     - 'CHERRY_LOG,櫻花木原木,24'
+    - 'PALE_OAK_LOG,蒼白橡木原木,24'
     - 'BAMBOO_BLOCK,竹方塊,24'
     - 'STRIPPED_OAK_LOG,剝皮橡木原木,26'
     - 'STRIPPED_SPRUCE_LOG,剝皮杉木原木,26'
@@ -56,6 +57,7 @@ BUILDING_MATERIAL_BLOCK:
     - 'DARK_OAK_PLANKS,黑橡木材,6'
     - 'MANGROVE_PLANKS,紅樹林木材,6'
     - 'CHERRY_PLANKS,櫻花木材,6'
+    - 'PALE_OAK_PLANKS,蒼白橡木材,6'
     - 'BAMBOO_PLANKS,竹材,6'
     - 'CRIMSON_STEM,緋紅蕈柄,32'
     - 'STRIPPED_CRIMSON_STEM,剝皮緋紅蕈柄,34'
@@ -81,13 +83,14 @@ BUILDING_MATERIAL_BLOCK:
     - 'MYCELIUM,菌絲土,20'
     - 'CRIMSON_NYLIUM,緋紅菌絲石,30'
     - 'WARPED_NYLIUM,扭曲菌絲土,30'
+    - 'MUD,泥巴,6'
     - 'MUD_BRICKS,泥磚,36'
   TYPE_4: #石頭類 磚塊類
     - 'STONE,石頭,6'
     - 'COBBLESTONE,鵝卵石,4'
     - 'SMOOTH_STONE,平滑石頭,20'
     - 'MOSSY_COBBLESTONE,青苔鵝卵石,8'
-    - 'MOSS_BLOCK,苔癬方塊,12'
+    - 'MOSS_BLOCK,苔蘚方塊,12'
     - 'MOSSY_STONE_BRICKS,青苔石磚,25'
     - 'CHISELED_STONE_BRICKS,浮雕石磚,25'
     - 'STONE_BRICKS,石磚,25'
@@ -113,6 +116,7 @@ BUILDING_MATERIAL_BLOCK:
     - 'BRICKS,紅磚,12'
     - 'CALCITE,方解石,18'
     - 'DRIPSTONE_BLOCK,鐘乳石方塊,18'
+    - 'TUFF,凝灰岩,10'
 
 
   TYPE_5: #沙類
@@ -253,7 +257,7 @@ DYED_BLOCK:
     - 'GREEN_TERRACOTTA,綠色陶土,15'
     - 'RED_TERRACOTTA,紅色陶土,15'
     - 'BLACK_TERRACOTTA,黑色陶土,15'
-    - 'TERRACOTTA,陶土末,14'
+    - 'TERRACOTTA,一般陶土,14'
     - 'NULL'
     - 'CLAY,黏土,5'
   TYPE_3: #混凝土類
@@ -374,6 +378,7 @@ OTH_BLOCK:
     - 'DARK_OAK_SAPLING,黑橡木樹苗,10'
     - 'ACACIA_SAPLING,相思木樹苗,10'
     - 'CHERRY_SAPLING,櫻花木樹苗,10'
+    - 'PALE_OAK_SAPLING,蒼白橡木樹苗,10'
     - 'NULL'
     - 'NULL'
     - 'DANDELION,蒲公英,10'
@@ -389,6 +394,13 @@ OTH_BLOCK:
     - 'TWISTING_VINES,扭曲藤,36'
     - 'WEEPING_VINES,垂泣藤,36'
     - 'GLOW_LICHEN,發光地衣,22'
+    - 'PINK_PETALS,粉瓣花,10'
+    - 'LEAF_LITTER,枯葉,10'
+    - 'CRIMSON_ROOTS,緋紅蕈根,20'
+    - 'WARPED_ROOTS,扭曲蕈根,20'
+
+  TYPE_3: #珊瑚類（未開放）
+    - 'NULL'
 
 
 
@@ -398,3 +410,4 @@ MESSAGE:
   NO_DOWN: '&c購買失敗，您需要 ⎋%matcoin% 建材點'
   INV_NOSLOT: '&c背包沒有空間，無法購買'
   COIN_ERROR: '&c建材點錯誤，請聯絡管理員!'
+  NO_PERMISSION: '&c你沒有權限使用建材商店'
