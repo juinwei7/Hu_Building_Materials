@@ -49,6 +49,9 @@ public class Menu {
         List<String> lore = new ArrayList<>();
         lore.add(" ");
         lore.add("§7當前建材點: " + coin);
+        lore.add(" ");
+        lore.add("§e(購買建材點數請到選單商城)");
+        lore.add("§e(第一排第四個 -> 商城系統)");
 
         ItemMeta im = item.getItemMeta();
         im.setDisplayName(name);

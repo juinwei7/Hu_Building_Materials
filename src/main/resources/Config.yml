@@ -10,10 +10,11 @@ PERMISSIONS:
   # 設定 hu_building.VIP1
   VIP:
     DEFAULT: 1
-    VIP5: 0.9
-    VIP6: 0.8
-    VIP7: 0.7
-    VIP8: 0.6
+    VIP5: 0.95
+    VIP7: 0.9
+    VIP8: 0.85
+    VIP9: 0.7
+    VIP10: 0.6
 
 
 
@@ -199,7 +200,14 @@ BUILDING_MATERIAL_BLOCK:
     - 'NULL'
     - 'BOOKSHELF,書櫃,24'
     - 'COBWEB,蜘蛛網,12'
-
+    - 'NULL'
+    - 'NULL'
+    - 'NULL'
+    - 'NULL'
+    - 'NULL'
+    - 'NULL'
+    - 'NULL'
+    - 'AMETHYST_BLOCK,紫水晶方塊,32'
 
 
 DYED_BLOCK:
@@ -210,6 +218,7 @@ DYED_BLOCK:
     - 'WHITE_CONCRETE,混凝土類,3'
     - 'WHITE_GLAZED_TERRACOTTA,釉陶類,4'
     - 'GLASS,玻璃類,5'
+    - 'WHITE_DYE,染料類,6'
   TYPE_1: #羊毛類
     - 'WHITE_WOOL,白色羊毛,14'
     - 'ORANGE_WOOL,橙色羊毛,14'
@@ -322,6 +331,23 @@ DYED_BLOCK:
     - 'NULL'
     - 'GLASS,玻璃,8'
     - 'TINTED_GLASS,遮光玻璃,12'
+  TYPE_6: #染料類
+    - 'WHITE_DYE,白色染料,24'
+    - 'ORANGE_DYE,橙色染料,24'
+    - 'MAGENTA_DYE,洋紅色染料,24'
+    - 'LIGHT_BLUE_DYE,淺藍色染料,24'
+    - 'YELLOW_DYE,黃色染料,24'
+    - 'LIME_DYE,淺綠色染料,24'
+    - 'PINK_DYE,粉紅色染料,24'
+    - 'GRAY_DYE,灰色染料,24'
+    - 'LIGHT_GRAY_DYE,淺灰色染料,24'
+    - 'CYAN_DYE,清色染料,24'
+    - 'PURPLE_DYE,紫色染料,24'
+    - 'BLUE_DYE,藍色染料,24'
+    - 'BROWN_DYE,棕色染料,24'
+    - 'GREEN_DYE,綠色染料,24'
+    - 'RED_DYE,紅色染料,24'
+    - 'BLACK_DYE,黑色染料,24'
 
 OTH_BLOCK:
   GUINAME: '              &1&L其他方塊'
@@ -333,11 +359,13 @@ OTH_BLOCK:
     - 'REDSTONE_BLOCK,紅石方塊,36'
     - 'PISTON,活塞,36'
     - 'STICKY_PISTON,黏性活塞,40'
+    - 'OBSERVER,偵測器,36'
     - 'DROPPER,投擲器,36'
     - 'DISPENSER,發射器,36'
     - 'JUKEBOX,唱片機,35'
     - 'NOTE_BLOCK,音階盒,35'
     - 'TARGET,標靶,60'
+    - 'HOPPER,漏斗,40'
   TYPE_2: #樹苗類
     - 'OAK_SAPLING,橡木樹苗,10'
     - 'SPRUCE_SAPLING,杉木樹苗,10'
@@ -360,6 +388,7 @@ OTH_BLOCK:
     - 'VINE,藤蔓,20'
     - 'TWISTING_VINES,扭曲藤,36'
     - 'WEEPING_VINES,垂泣藤,36'
+    - 'GLOW_LICHEN,發光地衣,22'
 
 
 
