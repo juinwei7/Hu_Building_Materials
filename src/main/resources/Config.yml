@@ -429,6 +429,7 @@ OTH_BLOCK:
     - 'REDSTONE_BLOCK,紅石類,1'
     - 'OAK_SAPLING,樹苗類 花草類,2'
     - 'TUBE_CORAL,珊瑚類(未開放),3'
+    - 'LIGHT,特殊方塊,4'
   TYPE_1: #紅石類
     - 'REDSTONE_BLOCK,紅石方塊,36'
     - 'PISTON,活塞,36'
@@ -471,6 +472,10 @@ OTH_BLOCK:
 
   TYPE_3: #珊瑚類（未開放）
     - 'NULL'
+
+  # 原版 LIGHT 是可放置的隱形光源，適合管理員造景使用。
+  TYPE_4: #管理用方塊
+    - 'LIGHT,隱形光源方塊,500'
 
 
 
