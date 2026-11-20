@@ -1,8 +1,10 @@
 package org.weiwei.hu_building_materials;
 
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.weiwei.hu_building_materials.listener.MenuListener;
+import org.weiwei.hu_building_materials.menu.ShopInventoryHolder;
 import org.weiwei.hu_building_materials.command.Command;
 import uilt.Config;
 
@@ -28,6 +30,11 @@ public final class Hu_Building_Materials extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        // 熱重載時先關掉開著的商店，卸載後監聽器不在，圖示會被拿走
+        for (Player player : getServer().getOnlinePlayers()) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof ShopInventoryHolder) {
+                player.closeInventory();
+            }
+        }
     }
 }

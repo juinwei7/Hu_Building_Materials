@@ -24,6 +24,8 @@ import static uilt.seed.seed;
 import static uilt.ItemTool.*;
 
 public class MenuListener implements Listener {
+    private final PurchaseConfirm confirm = new PurchaseConfirm();
+
     @EventHandler
     void onOpen(InventoryOpenEvent event) {
         if (!(event.getInventory().getHolder() instanceof ShopInventoryHolder holder)) {
@@ -63,25 +65,35 @@ public class MenuListener implements Listener {
         }
 
         if (getIntData(item, "coin_purchase") != null) {
+            if (!confirm.isConfirmed(player, slot, "coin")) {
+                confirm.arm(player, inv, slot, "coin");
+                seed(player, Menu.formatCoinPurchaseText("&e再點一次確認：花 $%price% 遊戲幣買 %amount% ⎋建材點（5 秒內）"));
+                return;
+            }
             handleCoinPurchase(player, inv);
+            confirm.arm(player, inv, slot, "coin");
             return;
         }
 
         if (slot == 3) {
+            confirm.clear(player);
             player.openInventory(creatInv(player, BUILDING));
             return;
         }
         if (slot == 4) {
+            confirm.clear(player);
             player.openInventory(creatInv(player, DYED));
             return;
         }
         if (slot == 5) {
+            confirm.clear(player);
             player.openInventory(creatInv(player, OTHER));
             return;
         }
 
         Integer typeInt = getIntData(item, "type_int");
         if (typeInt != null) {
+            confirm.clear(player);
             double vipDiscount = getVipDiscount(player);
             String configSection = switch (holder.getShopType()) {
                 case BUILDING -> "BUILDING_MATERIAL_BLOCK";
@@ -113,6 +125,13 @@ public class MenuListener implements Listener {
             return;
         }
 
+        String confirmKey = "build:" + item.getType() + ":" + matcoin;
+        if (!confirm.isConfirmed(player, slot, confirmKey)) {
+            confirm.arm(player, inv, slot, confirmKey);
+            seed(player, "&e再點一次確認購買 &f64 個&e，花 ⎋%matcoin% 建材點（5 秒內）", matcoin);
+            return;
+        }
+
         boolean taken = CoinService.takeCoin(player.getUniqueId(), matcoin, "購買建材 " + item.getType());
         if (!taken) {
             seed(player, Config.getConfig().getString(Config.MEG_COIN_ERROR), matcoin);
@@ -127,6 +146,7 @@ public class MenuListener implements Listener {
         log(player.getName() + " 購買建材 " + giveitem.getType(), "log");
         seed(player, Config.getConfig().getString(Config.MEG_YES_DOWN), matcoin);
         Menu.refreshInv(player, inv);
+        confirm.arm(player, inv, slot, confirmKey);
     }
 
     private void handleCoinPurchase(Player player, Inventory inventory) {
