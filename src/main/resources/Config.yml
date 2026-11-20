@@ -8,9 +8,8 @@ PREFIX: '§f〔幻嵐助手〕§r'
 # 每個建材商品說明最後都會加上這些內容。
 # 每次購買固定獲得 64 個對應方塊。
 ITEM_LORE:
-  - '&f購買前請確認購買物品是正確'
-  - ''
-  - '&c!注意 買錯無法退貨'
+  - '&e左鍵 &f買 64 個'
+  - '&8買錯無法退貨'
 
 PERMISSIONS:
   # false：所有玩家都能打開商店。
@@ -89,14 +88,14 @@ BUILDING_MATERIAL_BLOCK:
   # 建材方塊分頁的 GUI 標題。
   GUINAME: '              &1&L建材方塊'
   BLOCK:
-    - 'OAK_LOG,木頭類,1'
-    - 'OAK_LEAVES,葉子類,2'
-    - 'GRASS_BLOCK,泥土類,3'
-    - 'STONE,石頭類 磚塊類,4'
-    - 'SAND,沙類,5'
-    - 'SEA_LANTERN,海洋類,6'
-    - 'END_STONE,終界類 地域類,7'
-    - 'BEE_NEST,其他,8'
+    - 'OAK_LOG,木頭,1'
+    - 'OAK_LEAVES,樹葉,2'
+    - 'GRASS_BLOCK,泥土與草,3'
+    - 'STONE,石頭與磚,4'
+    - 'SAND,沙與砂岩,5'
+    - 'SEA_LANTERN,冰雪與海洋,6'
+    - 'END_STONE,地獄與終界,7'
+    - 'BEE_NEST,雜項,8'
   TYPE_1: #木頭類
     - 'OAK_LOG,橡木原木,24'
     - 'SPRUCE_LOG,杉木原木,24'
@@ -286,12 +285,12 @@ BUILDING_MATERIAL_BLOCK:
 DYED_BLOCK:
   GUINAME: '              &1&L染色方塊'
   BLOCK:
-    - 'WHITE_WOOL,羊毛類,1'
-    - 'TERRACOTTA,陶土類,2'
-    - 'WHITE_CONCRETE,混凝土類,3'
-    - 'WHITE_GLAZED_TERRACOTTA,釉陶類,4'
-    - 'GLASS,玻璃類,5'
-    - 'WHITE_DYE,染料類,6'
+    - 'WHITE_WOOL,羊毛,1'
+    - 'TERRACOTTA,陶土,2'
+    - 'WHITE_CONCRETE,混凝土,3'
+    - 'WHITE_GLAZED_TERRACOTTA,釉陶,4'
+    - 'GLASS,玻璃,5'
+    - 'WHITE_DYE,染料,6'
   TYPE_1: #羊毛類
     - 'WHITE_WOOL,白色羊毛,14'
     - 'ORANGE_WOOL,橙色羊毛,14'
@@ -426,8 +425,8 @@ DYED_BLOCK:
 OTH_BLOCK:
   GUINAME: '              &1&L其他方塊'
   BLOCK:
-    - 'REDSTONE_BLOCK,紅石類,1'
-    - 'OAK_SAPLING,樹苗類 花草類,2'
+    - 'REDSTONE_BLOCK,紅石,1'
+    - 'OAK_SAPLING,樹苗與花草,2'
     - 'TUBE_CORAL,珊瑚類(未開放),3'
     - 'LIGHT,特殊方塊,4'
   TYPE_1: #紅石類

@@ -272,8 +272,8 @@ public class Config {
         }
 
         int slot = getCoinPurchaseSlot();
-        if (slot < 0 || slot > 53) {
-            errors.add(COIN_PURCHASE + ".SLOT 必須介於 0 到 53");
+        if (slot < 0 || slot > 8) {
+            errors.add(COIN_PURCHASE + ".SLOT 必須介於 0 到 8（第 1 排起是分類與商品）");
         } else if (slot == 0 || slot == 3 || slot == 4 || slot == 5 || slot == getVipDisplaySlot()) {
             errors.add(COIN_PURCHASE + ".SLOT 不可使用已佔用的按鈕格");
         }
@@ -324,7 +324,8 @@ public class Config {
             return;
         }
 
-        int maxItems = isCoinPurchaseEnabled() && getCoinPurchaseSlot() >= 9 ? 44 : 45;
+        // 版面：第 1 排分類 9 格、第 2～5 排商品 36 格
+        int maxItems = isProductList ? 36 : 9;
         if (items.size() > maxItems) {
             errors.add(path + " 共 " + items.size() + " 格，超過 GUI 上限 " + maxItems + " 格");
         }
